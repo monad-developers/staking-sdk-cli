@@ -286,11 +286,11 @@ If transactions fail with status `0`:
   - Extract your keystores using the `monad-keystore` binary (v0.11.2) and use the keystore files at `/home/monad/monad-bft/config/id-{bls,secp}` for the commands.
    ```sh
   source /home/monad/.env
-  monad keystore --keystore-path /home/monad/monad-bft/config/id-secp --password "$KEYSTORE_PASSWORD" --key-type secp
+  monad-keystore recover --keystore-path /home/monad/monad-bft/config/id-secp --password "$KEYSTORE_PASSWORD" --key-type secp
   ```
   ```sh
   source /home/monad/.env
-  monad keystore --keystore-path /home/monad/monad-bft/config/id-bls --password "$KEYSTORE_PASSWORD" --key-type bls
+  monad-keystore recover --keystore-path /home/monad/monad-bft/config/id-bls --password "$KEYSTORE_PASSWORD" --key-type bls
   ```
 
   ### CLI workflow:
