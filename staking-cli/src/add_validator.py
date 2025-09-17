@@ -174,7 +174,7 @@ def register_validator_cli(config: dict, secp_privkey: str, bls_privkey: str, au
         log.error(f"Error while sending tx: {e}")
         return
     log.info(f"Tx status: {receipt.status}")
-    log.info(f"Tx hash: {receipt.transactionHash.hex()}")
+    log.info(f"Tx hash: 0x{receipt.transactionHash.hex()}")
     get_validator_registration_event(config, receipt)
 
 
