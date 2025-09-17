@@ -88,7 +88,7 @@ Register a new validator on the network.
 python main.py add-validator \
 --secp-privkey a1b2c3d4e5f6789... \
 --bls-privkey 0x1a2b3c4d5e6f789... \
---auth-address 0x742d35Cc6621C0532925a3b8D4Ea55664bE1ABC1 \
+--auth-address 0x742d35C... \
 --amount 1000000 \
 --config-path ~/config.toml
 ```
@@ -169,7 +169,7 @@ python main.py query validator --validator-id 1 --config-path ~/config.toml
 ```sh
 python main.py query delegator \
 --validator-id 1 \
---delegator-address 0x742d35Cc6621C0532925a3b8D4Ea55664bE1ABC1 \
+--delegator-address 0x742d35C... \
 --config-path ~/config.toml
 ```
 
@@ -177,7 +177,7 @@ python main.py query delegator \
 ```sh
 python main.py query withdrawal-request \
 --validator-id 1 \
---delegator-address 0x742d35Cc6621C0532925a3b8D4Ea55664bE1ABC1 \
+--delegator-address 0x742d35C... \
 --withdrawal-id 0 \
 --config-path ~/config.toml
 ```
@@ -196,7 +196,7 @@ python main.py query delegators --validator-id 1 --config-path ~/config.toml
 ### Query Validators for a Delegator
 ```sh
 python main.py query delegations \
---delegator-address 0x742d35Cc6621C0532925a3b8D4Ea55664bE1ABC1 \
+--delegator-address 0x742d35C... \
 --config-path ~/config.toml
 ```
 
