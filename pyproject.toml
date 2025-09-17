@@ -1,0 +1,55 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "staking-sdk-py"
+dynamic = ["version"]
+description = ''
+readme = "README.md"
+requires-python = ">=3.8"
+license = "MIT"
+keywords = []
+authors = [{ name = "John Bergschneider", email = "jhb10c@protonmail.com" }]
+classifiers = [
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "blake3>=0.8.0",
+    "eth-keys>=0.4.0",
+    "py-ecc>=5.2.0",
+    "eth-abi>=5.2.0",
+    "web3>=6.0.0",
+    "rich>=14.1.0",
+    "toml>=0.10.2",
+]
+
+[project.urls]
+
+[tool.hatch.version]
+path = "src/staking_sdk_py/__about__.py"
+
+[tool.hatch.envs.types]
+extra-dependencies = ["mypy>=1.0.0"]
+[tool.hatch.envs.types.scripts]
+check = "mypy --install-types --non-interactive {args:src/staking_sdk_py tests}"
+
+[tool.coverage.run]
+source_pkgs = ["staking_sdk_py", "tests"]
+branch = true
+parallel = true
+omit = ["src/staking_sdk_py/__about__.py"]
+
+[tool.coverage.paths]
+staking_sdk_py = ["src/staking_sdk_py", "*/staking-sdk-py/src/staking_sdk_py"]
+tests = ["tests", "*/staking-sdk-py/tests"]
+
+[tool.coverage.report]
+exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/staking_sdk_py"]
