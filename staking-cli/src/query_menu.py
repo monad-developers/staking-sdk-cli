@@ -42,10 +42,10 @@ def print_validator(val_info, val_id, verbose):
     # print in validator info in table
     val_fields = [
     ("AuthAddress", ""), ("flags", ""), ("Execution View: Stake", "wei"),
-    ("Accumulated rewards per token", "wei") , ("Commission", "%"),
+    ("Accumulated rewards per token", "wei") , ("Execution View: Commission", "%"),
     ("Unclaimed Rewards", "wei"), ("Consensus View: Stake", "wei"),
     ("Consensus View: Commission", "%"), ("Snapshot View: Stake",  "wei"),
-    ("Snapshot View: Commission", "wei"), ("secp Pubkey", ""), ("bls Pubkey", "")]
+    ("Snapshot View: Commission", "%"), ("secp Pubkey", ""), ("bls Pubkey", "")]
 
     table = Table(title=f"Validator Info of: [red]val-id {val_id}[/]")
     table.add_column("Field", style="yellow")
@@ -59,6 +59,9 @@ def print_validator(val_info, val_id, verbose):
                     pass
                 elif val_fields[i][0] == "Accumulated rewards per token":
                     table.add_row(val_fields[i][0], str(val_info[i]/10**36) + f" {val_fields[i][1]}")
+                elif "Commission" in val_fields[i][0] and val_fields[i][1] == "%":
+                    commission_percentage = val_info[i] / (10**16)
+                    table.add_row(val_fields[i][0], f"{commission_percentage:.2f} {val_fields[i][1]}")
                 else:
                     table.add_row(val_fields[i][0], str(val_info[i]) + f" {val_fields[i][1]}")
             else:
