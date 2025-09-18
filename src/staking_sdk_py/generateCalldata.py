@@ -60,6 +60,9 @@ def compound(validator_id: Union[int, str]) -> str:
 def claim_rewards(validator_id: Union[int, str]) -> str:
     return "0x" + constants.CLAIM_REWARDS_SELECTOR + eth_abi.encode(['uint64'], [validator_id]).hex()
 
+def change_commission(validator_id: Union[int, str], commission: int) -> str:
+    return "0x" + constants.CHANGE_COMMISSION_SELECTOR + eth_abi.encode(['uint64', 'uint256'], [validator_id, commission]).hex()
+
 def get_epoch() -> str:
     return "0x" + constants.GET_EPOCH_SELECTOR
 
