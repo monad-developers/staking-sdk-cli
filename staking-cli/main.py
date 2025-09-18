@@ -13,6 +13,7 @@ from src.undelegate import undelegate_from_validator, undelegate_from_validator_
 from src.withdraw import withdraw_delegation, withdraw_delegation_cli
 from src.claim import claim_pending_rewards, claim_pending_rewards_cli
 from src.compound import compound_rewards, compound_rewards_cli
+from src.change_commission import change_validator_commission, change_validator_commission_cli
 from src.query_menu import query, query_cli
 from src.parser import init_parser
 from src.helpers import number_prompt, confirmation_prompt
@@ -65,8 +66,9 @@ class StakingCLI:
         [{self.colors["primary_text"]}]4. Withdraw[/]\n
         [{self.colors["primary_text"]}]5. Claim Rewards[/]\n
         [{self.colors["primary_text"]}]6. Compound[/]\n
-        [{self.colors["primary_text"]}]7. Query[/]\n
-        [{self.colors["primary_text"]}]8. Exit[/]\n
+        [{self.colors["primary_text"]}]7. Change Commission[/]\n
+        [{self.colors["primary_text"]}]8. Query[/]\n
+        [{self.colors["primary_text"]}]9. Exit[/]\n
         '''
         menu_text = Align(menu_text, align="left")
         main_panel = Panel(
@@ -76,9 +78,9 @@ class StakingCLI:
             expand=False
         )
         while True:
-            choices = [str(x) for x in range(1,9)]
+            choices = [str(x) for x in range(1,10)]
             self.console.print(main_panel)
-            choice = number_prompt("Enter a number as a choice", choices, default="8")
+            choice = number_prompt("Enter a number as a choice", choices, default="9")
 
             if choice == "1":
                 register_validator(self.config)
@@ -99,9 +101,12 @@ class StakingCLI:
                 compound_rewards(self.config)
                 self.log.info("Exited Compound Rewards\n\n")
             elif choice == "7":
+                change_validator_commission(self.config)
+                self.log.info("Exited Change Commission\n\n")
+            elif choice == "8":
                 query(self.config)
                 self.log.info("Exited Query Menu\n\n")
-            elif choice == "8":
+            elif choice == "9":
                 self.log.info("Staking CLI has been exited!")
                 sys.exit()
 
@@ -138,6 +143,10 @@ class StakingCLI:
         elif self.args.command == "compound-rewards":
             validator_id = self.args.validator_id
             compound_rewards_cli(self.config, validator_id)
+        elif self.args.command == "change-commission":
+            validator_id = self.args.validator_id
+            commission_percentage = self.args.commission
+            change_validator_commission_cli(self.config, validator_id, commission_percentage)
         elif self.args.command == "query":
             query_cli(self.config, self.args)
 

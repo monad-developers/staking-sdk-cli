@@ -14,6 +14,7 @@ def init_parser() -> argparse.ArgumentParser:
     withdraw_parser = subparsers.add_parser("withdraw", help="Withdraw undelegated stake from validator")
     claim_parser = subparsers.add_parser("claim-rewards", help="Claim staking rewards")
     compound_parser = subparsers.add_parser("compound-rewards", help="Compound rewards to validator")
+    change_commission_parser = subparsers.add_parser("change-commission", help="Change validator commission")
     query_parser = subparsers.add_parser("query", help="Query network information")
     tui_parser = subparsers.add_parser("tui", help="Use a menu-driven TUI")
 
@@ -50,6 +51,11 @@ def init_parser() -> argparse.ArgumentParser:
     # compound_parser
     compound_parser.add_argument("--validator-id", type=int, required=True, help="Unique id representing the validator on-chain")
     compound_parser.add_argument("--config-path", type=str, default="./config.toml", help="Add a path to a config.toml file")
+
+    # change_commission_parser
+    change_commission_parser.add_argument("--validator-id", type=int, required=True, help="Unique id representing the validator on-chain")
+    change_commission_parser.add_argument("--commission", type=float, required=True, help="New commission rate as percentage (0.0 to 100.0)")
+    change_commission_parser.add_argument("--config-path", type=str, default="./config.toml", help="Add a path to a config.toml file")
 
     # query_parser
     query_subparser = query_parser.add_subparsers(dest="query")
