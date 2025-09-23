@@ -44,14 +44,14 @@ pip install .
 
 > Note: To make changes to SDK code and have it reflect, use the `-e` flag with `pip`.
 
-### 4. Build an executable
+### 4. Build an executable (optional)
 > Make sure you are in a virtual environment with all dependencies installed as given in steps above to make a build successfully.
 ```sh
 pip install pyinstaller
 ```
 - Make sure you are in the correct directory
 ```sh
-cd staking-sdk-cli/staking-cli
+cd staking-cli
 ```
 - Run the pyinstaller command to create a spec
 ```sh
@@ -63,6 +63,10 @@ pyinstaller --noconfirm monad-staking-cli.spec
 ```
 
 The distribution will be available at `dist/monad-staking-cli/monad-staking-cli`. The folder `dist/monad-staking-cli` can be archived and distributed.
+```sh
+cd dist/monad-staking-cli/
+./monad-staking-cli --help
+```
 
 ## Configuration Setup
 
@@ -102,7 +106,7 @@ highlight = "yellow"
 ### Navigate to CLI directory
 
 ```sh
-cd staking-sdk-cli/staking-cli
+cd staking-cli
 ```
 
 ## Command Reference
