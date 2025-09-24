@@ -33,7 +33,7 @@ cd staking-sdk-cli
 
 ```sh
 python -m venv cli-venv
-source cli-venv/bin/activate  # On Windows: staking-cli\Scripts\activate
+source cli-venv/bin/activate  # On Windows: cli-venv/Scripts/activate
 ```
 
 ### 3. Install project dependencies
