@@ -371,7 +371,7 @@ If transactions fail with status `0`:
 >
 > ⚠️ Use `monad-keystore` to extract private keys and **verify** the derived keys with their respective public keys! ⚠️
 
-> 🛑 CAUTION: don't commit your `config.toml` file accidently! 🛑
+> 🛑 CAUTION: don't commit your `config.toml` file accidentally! 🛑
 
 1. Setup staking cli according to the [installation instructions](#installation).
 2. Create a `config.toml` file for the staking cli. Refer to `config.toml` [example](#configuration-setup).
@@ -418,7 +418,7 @@ python main.py add-validator \
 ```sh
 [13:49:49] INFO     SECP Pubkey: 03bbf692002bda53050f22289d4da8fe0bec8b81a6b0d4f641760....
            INFO     BLS Pubkey: 985d3f7052ac5ad586592ba1a240b0260b5351a9c3973a471fff79....
- Do the dervied public keys match? (make sure that the private keys were recovered using monad-keystore)  [y/n] (n): y
+ Do the derived public keys match? (make sure that the private keys were recovered using monad-keystore)  [y/n] (n): y
 [13:49:52] INFO     Tx status: 1
            INFO     Tx hash: e11114c8e6dd1dc5e0cde400ce5014dab257....
 ```
@@ -449,7 +449,7 @@ python main.py tui --config-path /path/to/config.toml
 
 - Make sure the transaction exited with status 1
 
-- Make sure you got a vaildator-id after command runs
+- Make sure you got a validator-id after command runs
 
 ```sh
 INFO     Validator Created! ID: 1, Delegator: 0xF88.....
@@ -511,7 +511,7 @@ curl --location 'https://your-monad-rpc-url' \
   "gas": "0xc350",
   "gasPrice": "0xbdfd63e00",
   "value": "{{ FILL FROM TX DATA }}",
-  "data": "0xf145204c0000000000l {{ FILL FROM TX DATA }}.... "
+  "data": "0xf145204c0000000000 {{ FILL FROM TX DATA }}.... "
  }, "latest"],
  "id":1
 }'
