@@ -122,4 +122,4 @@ def delegate_to_validator_cli(config: dict, val_id: int, amount: int):
         log.error(f"Error! while trying to send tx: {e}")
         return
     log.info(f"Tx status: {receipt.status}")
-    log.info(f"Tx hash: {receipt.transactionHash.hex()}")
+    log.info(f"Tx hash: 0x{receipt.transactionHash.hex()}")

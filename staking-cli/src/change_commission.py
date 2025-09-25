@@ -185,7 +185,7 @@ def change_validator_commission_cli(
         return
 
     log.info(f"Tx status: {receipt.status}")
-    log.info(f"Tx hash: {receipt.transactionHash.hex()}")
+    log.info(f"Tx hash: 0x{receipt.transactionHash.hex()}")
 
     if receipt.status == 1:
         log.info(

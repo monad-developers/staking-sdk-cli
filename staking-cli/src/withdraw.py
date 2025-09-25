@@ -166,4 +166,4 @@ def withdraw_delegation_cli(config: dict, val_id: int, withdrawal_id: int):
         return
 
     log.info(f"Tx status: {receipt.status}")
-    log.info(f"Tx hash: {receipt.transactionHash.hex()}")
+    log.info(f"Tx hash: 0x{receipt.transactionHash.hex()}")
