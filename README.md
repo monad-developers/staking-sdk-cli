@@ -1,7 +1,16 @@
 # staking-cli
 
 A CLI tool to interact with Monad's staking contract and execute operations by interacting with it.
-
+## Table of Contents
+1. [Features](#features)
+2. [Prerequisites](#prerequisites)
+3. [Installation](#installation)
+4. [Configuration](#configuration)
+5. [Validator Onboarding](#validator-onboarding-workflow)
+6. [Usage](#usage)
+7. [TUI Mode](#tui-mode)
+8. [Troubleshooting](#troubleshooting)
+9. [Example Workflow](#example-workflow)
 ## Features
 
 - Adding/Registering a Validator
@@ -68,11 +77,13 @@ cd dist/monad-staking-cli/
 ./monad-staking-cli --help
 ```
 
-## Configuration Setup
+## Configuration
 
 ### 1. Create config.toml file
 
 Create a file named `config.toml` in your preferred location (e.g., home directory or project root):
+
+> Note: Default config path is `./config.toml` . Create it in the same directory as `main.py` or an executable to avoid passing the config flags for every command.
 
 ```toml
 # Main application settings
@@ -101,6 +112,173 @@ highlight = "yellow"
 - **Keep your config.toml file secure and private**
 - **Use a funded address with sufficient balance for gas fees**
 
+## Validator Onboarding Workflow
+
+### Summary
+>
+> ⚠️ Use `monad-keystore` to extract private keys and **verify** the derived keys with their respective public keys! ⚠️
+
+> 🛑 CAUTION: don't commit your `config.toml` file accidently! 🛑
+
+1. Setup staking cli according to the [installation instructions](#installation).
+2. Create a `config.toml` file for the staking cli. Refer to `config.toml` [example](#configuration-setup).
+3. Get a Funded Address and populate the `config.toml` with it's private key.
+4. Make sure you have enough tokens in your wallet - **minimum stake: 1,000,000 MON** to register and **sufficient gas** to execute the transactions.
+5. Choose between [cli](#cli-workflow) or [tui](#tui-workflow) mode and execute the `add-validator` workflow as described below.
+6. Follow the debug and troubleshooting steps below in case of unexpected behaviour or general issues.
+
+### Extract Private keys
+  >
+  > ⚠️ Due to changes in keystore versions over upgrades make sure you follow the method below to get your private keys!
+
+- Extract your keystores using the `monad-keystore` binary (v0.11.2) and use the keystore files at `/home/monad/monad-bft/config/id-{bls,secp}` for the commands.
+
+   ```sh
+  source /home/monad/.env
+  monad-keystore recover --keystore-path /home/monad/monad-bft/config/id-secp --password "$KEYSTORE_PASSWORD" --key-type secp
+  ```
+
+  ```sh
+  source /home/monad/.env
+  monad-keystore recover --keystore-path /home/monad/monad-bft/config/id-bls --password "$KEYSTORE_PASSWORD" --key-type bls
+  ```
+
+### CLI workflow
+
+- Use the command below and **fill in the values carefully** before executing the command, if the keys are wrong the funds will be deducted!
+
+```sh
+python main.py add-validator \
+--secp-privkey "{{ SECP privkey from id-secp }}" \
+--bls-privkey "{{ BLS privkey from id-bls }}" \
+--auth-address "{{ auth-address (YOU MUST CONTROL THIS ADDRESS) }}" \
+--amount 1_000_000 \
+--config-path ~/config.toml
+```
+
+> Authorized address is the address that will have control over validator operations on-chain. This address can be different from the funded address. Make sure you have control over the authorized address which you provide.
+
+- ⚠️ Make sure you verify keys before entering yes in the prompt
+
+#### Expected Output
+
+```sh
+[13:49:49] INFO     SECP Pubkey: 03bbf692002bda53050f22289d4da8fe0bec8b81a6b0d4f641760....
+           INFO     BLS Pubkey: 985d3f7052ac5ad586592ba1a240b0260b5351a9c3973a471fff79....
+ Do the derived public keys match? (make sure that the private keys were recovered using monad-keystore)  [y/n] (n): y
+[13:49:52] INFO     Tx status: 1
+           INFO     Tx hash: e11114c8e6dd1dc5e0cde400ce5014dab257....
+```
+
+> Transaction status: 0 means the transaction failed, check debug steps to get the trace.
+
+### TUI workflow
+
+- Run the staking cli in tui-mode:
+
+```sh
+python main.py tui --config-path /path/to/config.toml
+```
+
+- In the `Main Menu` choose option 1 to Add Validator
+
+![Add Validator - 1](demo/add-validator-1.png "Add Validator - 1")
+
+- Fill in the prompts with the appropriate values
+
+![Add Validator - 1](demo/add-validator-2.png "Add Validator - 1")
+
+- Verify all the values before executing the transaction
+
+![Add Validator - 1](demo/add-validator-3.png "Add Validator - 1")
+
+### Verification of onboarding
+
+- Make sure the transaction exited with status 1
+
+- Make sure you got a validator-id after command runs
+
+```sh
+INFO     Validator Created! ID: 1, Delegator: 0xF88.....
+```
+
+- Make sure you are part of the execution set (Only after 50 million stake has been given)
+
+```sh
+python main.py query validator-set --type execution --config-path ~/config.toml | grep {{ SECP PUBKEY }}
+```
+
+- Check validator information. After running above command you will get the validator-id of your validator
+
+```sh
+19: 03bbf6...
+```
+
+> 19 is the validator id in this case, it can be used to perform other operations like delegate, undelegate, claim, compound etc.
+
+- Fetch validator info
+
+```sh
+python main.py query validator --validator-id 1 --config-path ~/config.toml
+```
+
+- Verify all values match in the output
+
+### Onboarding Troubleshooting
+
+1. Check transaction status, if 0 the transaction has failed
+2. For a failed transaction you need to obtain the trace by:
+
+- Getting the tx data:
+
+```sh
+curl --location 'https://your-monad-rpc-url' \
+--header 'Content-Type: application/json' \
+--data '{
+ "jsonrpc":"2.0",
+ "method":"eth_getTransactionByHash",
+ "params":[
+  "0xe57ada....{enter the hash of the failed tx}..."
+ ],
+ "id":1
+}'
+```
+
+- Use the data from the above tx to make an `eth_call` tx:
+
+```sh
+curl --location 'https://your-monad-rpc-url' \
+--header 'Content-Type: application/json' \
+--data '{
+ "jsonrpc":"2.0",
+ "method":"eth_call",
+ "params":[{
+  "from": "0xf88c... {{ FILL FROM TX DATA }}",
+  "to": "0x0000000000000000000000000000000000001000 {{ FILL FROM TX DATA }}",
+  "gas": "0xc350",
+  "gasPrice": "0xbdfd63e00",
+  "value": "{{ FILL FROM TX DATA }}",
+  "data": "0xf145204c0000000000 {{ FILL FROM TX DATA }}.... "
+ }, "latest"],
+ "id":1
+}'
+```
+
+The above would give you the trace response like:
+
+```json
+{
+    "jsonrpc": "2.0",
+    "error": {
+        "code": -32603,
+        "message": "insufficient balance"
+    },
+    "id": 1
+}
+```
+
+- In the case you can't debug from the trace, post it on discord or open a ticket.
+
 ## Usage
 
 ### Navigate to CLI directory
@@ -120,12 +298,13 @@ Register a new validator on the network.
 - Minimum stake to join register validator: 1,000,000 MON
 - Valid SECP256k1 private key (64 hex chars, no 0x prefix)
 - Valid BLS private key (64 hex chars, with 0x prefix)
+- Make sure the `auth-address` is an address you control and intend to perform validator operations with. This can be the same as the funded address. You can provide another address here to decouple staking and operations.
 
 ```sh
 python main.py add-validator \
---secp-privkey a1b2c3d4e5f6789... \
---bls-privkey 0x1a2b3c4d5e6f789... \
---auth-address 0x742d35C... \
+--secp-privkey "{{ VALIDATOR PRIVATE SECP KEY }}" \
+--bls-privkey "{{ VALIDATOR PRIVATE SECP KEY }}" \
+--auth-address "{{ AN ADDRESS THAT YOU CONTROL }}" \
 --amount 1000000 \
 --config-path ~/config.toml
 ```
@@ -364,170 +543,3 @@ If transactions fail with status `0`:
 ## TUI workflow Screenshots
 
 ![Demo](demo/demo-ss.png "Delegation Demo")
-
-## Validator Onboarding Workflow
-
-### Summary
->
-> ⚠️ Use `monad-keystore` to extract private keys and **verify** the derived keys with their respective public keys! ⚠️
-
-> 🛑 CAUTION: don't commit your `config.toml` file accidentally! 🛑
-
-1. Setup staking cli according to the [installation instructions](#installation).
-2. Create a `config.toml` file for the staking cli. Refer to `config.toml` [example](#configuration-setup).
-3. Get a Funded Address and populate the `config.toml` with it's private key.
-4. Make sure you have enough tokens in your wallet - **minimum stake: 1,000,000 MON** to register and **sufficient gas** to execute the transactions.
-5. Choose between [cli](#cli-workflow) or [tui](#tui-workflow) mode and execute the `add-validator` workflow as described below.
-6. Follow the debug and troubleshooting steps below in case of unexpected behaviour or general issues.
-
-### Extract Private keys
-  >
-  > ⚠️ Due to changes in keystore versions over upgrades make sure you follow the method below to get your private keys!
-
-- Extract your keystores using the `monad-keystore` binary (v0.11.2) and use the keystore files at `/home/monad/monad-bft/config/id-{bls,secp}` for the commands.
-
-   ```sh
-  source /home/monad/.env
-  monad-keystore recover --keystore-path /home/monad/monad-bft/config/id-secp --password "$KEYSTORE_PASSWORD" --key-type secp
-  ```
-
-  ```sh
-  source /home/monad/.env
-  monad-keystore recover --keystore-path /home/monad/monad-bft/config/id-bls --password "$KEYSTORE_PASSWORD" --key-type bls
-  ```
-
-### CLI workflow
-
-- Use the command below and **fill in the values carefully** before executing the command, if the keys are wrong the funds will be deducted!
-
-```sh
-python main.py add-validator \
---secp-privkey "{{ SECP privkey from id-secp }}" \
---bls-privkey "{{ BLS privkey from id-bls }}" \
---auth-address "{{ auth-address }}" \
---amount 1_000_000 \
---config-path ~/config.toml
-```
-
-> Authorized address is the address that will have control over validator operations on-chain. This address can be different from the funded address. Make sure you have control over the authorized address which you provide.
-
-- ⚠️ Make sure you verify keys before entering yes in the prompt
-
-#### Expected Output
-
-```sh
-[13:49:49] INFO     SECP Pubkey: 03bbf692002bda53050f22289d4da8fe0bec8b81a6b0d4f641760....
-           INFO     BLS Pubkey: 985d3f7052ac5ad586592ba1a240b0260b5351a9c3973a471fff79....
- Do the derived public keys match? (make sure that the private keys were recovered using monad-keystore)  [y/n] (n): y
-[13:49:52] INFO     Tx status: 1
-           INFO     Tx hash: e11114c8e6dd1dc5e0cde400ce5014dab257....
-```
-
-> Transaction status: 0 means the transaction failed, check debug steps to get the trace.
-
-### TUI workflow
-
-- Run the staking cli in tui-mode:
-
-```sh
-python main.py tui --config-path /path/to/config.toml
-```
-
-- In the `Main Menu` choose option 1 to Add Validator
-
-![Add Validator - 1](demo/add-validator-1.png "Add Validator - 1")
-
-- Fill in the prompts with the appropriate values
-
-![Add Validator - 1](demo/add-validator-2.png "Add Validator - 1")
-
-- Verify all the values before executing the transaction
-
-![Add Validator - 1](demo/add-validator-3.png "Add Validator - 1")
-
-### Verification of onboarding
-
-- Make sure the transaction exited with status 1
-
-- Make sure you got a validator-id after command runs
-
-```sh
-INFO     Validator Created! ID: 1, Delegator: 0xF88.....
-```
-
-- Make sure you are part of the execution set (Only after 50 million stake has been given)
-
-```sh
-python main.py query validator-set --type execution --config-path ~/config.toml | grep {{ SECP PUBKEY }}
-```
-
-- Check validator information. After running above command you will get the validator-id of your validator
-
-```sh
-19: 03bbf6...
-```
-
-> 19 is the validator id in this case, it can be used to perform other operations like delegate, undelegate, claim, compound etc.
-
-- Fetch validator info
-
-```sh
-python main.py query validator --validator-id 1 --config-path ~/config.toml
-```
-
-- Verify all values match in the output
-
-### Troubleshooting
-
-1. Check transaction status, if 0 the transaction has failed
-2. For a failed transaction you need to obtain the trace by:
-
-- Getting the tx data:
-
-```sh
-curl --location 'https://your-monad-rpc-url' \
---header 'Content-Type: application/json' \
---data '{
- "jsonrpc":"2.0",
- "method":"eth_getTransactionByHash",
- "params":[
-  "0xe57ada....{enter the hash of the failed tx}..."
- ],
- "id":1
-}'
-```
-
-- Use the data from the above tx to make an `eth_call` tx:
-
-```sh
-curl --location 'https://your-monad-rpc-url' \
---header 'Content-Type: application/json' \
---data '{
- "jsonrpc":"2.0",
- "method":"eth_call",
- "params":[{
-  "from": "0xf88c... {{ FILL FROM TX DATA }}",
-  "to": "0x0000000000000000000000000000000000001000 {{ FILL FROM TX DATA }}",
-  "gas": "0xc350",
-  "gasPrice": "0xbdfd63e00",
-  "value": "{{ FILL FROM TX DATA }}",
-  "data": "0xf145204c0000000000 {{ FILL FROM TX DATA }}.... "
- }, "latest"],
- "id":1
-}'
-```
-
-The above would give you the trace response like:
-
-```json
-{
-    "jsonrpc": "2.0",
-    "error": {
-        "code": -32603,
-        "message": "insufficient balance"
-    },
-    "id": 1
-}
-```
-
-- In the case you can't debug from the trace, post it on discord or open a ticket.

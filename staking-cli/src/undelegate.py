@@ -178,4 +178,4 @@ def undelegate_from_validator_cli(config: dict, val_id: int, amount: int, withdr
         log.error(f"Error while sending tx: {e}")
         return
     log.info(f"Tx status: {receipt.status}")
-    log.info(f"Tx hash: {receipt.transactionHash.hex()}")
+    log.info(f"Tx hash: 0x{receipt.transactionHash.hex()}")
