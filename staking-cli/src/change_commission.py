@@ -55,7 +55,11 @@ def change_validator_commission(config: dict):
                 f"[{colors['primary_text']}]Enter new commission rate as percentage (0-100): [/]"
             )
             commission_percentage = float(commission_input)
-            if 0 <= commission_percentage <= 100:
+            if commission_percentage == current_commission_percentage:
+                console.print(
+                    f"[yellow]New commission {commission_percentage} equal to current {current_commission_percentage}[/]"
+                )
+            elif 0 <= commission_percentage <= 100:
                 # Convert percentage to 1e18 scale
                 commission = int(commission_percentage * (10**16))
                 break
