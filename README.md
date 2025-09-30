@@ -129,18 +129,19 @@ highlight = "yellow"
 
 ### Extract Private keys
   >
-  > ⚠️ Due to changes in keystore versions over upgrades make sure you follow the method below to get your private keys!
+  > ⚠️ Due to changes in keystore versions over upgrades make sure you follow the method below to get your private keys! **DO NOT USE ANY KEYS IN BACKUP FILES**
 
-- Extract your keystores using the `monad-keystore` binary (v0.11.2) and use the keystore files at `/home/monad/monad-bft/config/id-{bls,secp}` for the commands.
+  - Extract your SECP and BLS keys from keystores using the `monad-keystore` binary (v0.11.2).
+Use the keystore files at `/home/monad/monad-bft/config/id-{bls,secp}`.
 
    ```sh
   source /home/monad/.env
-  monad-keystore recover --keystore-path /home/monad/monad-bft/config/id-secp --password "$KEYSTORE_PASSWORD" --key-type secp
+  monad-keystore recover --password "$KEYSTORE_PASSWORD" --keystore-path /home/monad/monad-bft/config/id-secp  --key-type secp
   ```
 
   ```sh
   source /home/monad/.env
-  monad-keystore recover --keystore-path /home/monad/monad-bft/config/id-bls --password "$KEYSTORE_PASSWORD" --key-type bls
+  monad-keystore recover --password "$KEYSTORE_PASSWORD" --keystore-path /home/monad/monad-bft/config/id-bls  --key-type bls
   ```
 
 ### CLI workflow
