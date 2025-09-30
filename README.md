@@ -121,7 +121,7 @@ highlight = "yellow"
 > 🛑 CAUTION: don't commit your `config.toml` file accidently! 🛑
 
 1. Setup staking cli according to the [installation instructions](#installation).
-2. Create a `config.toml` file for the staking cli. Refer to `config.toml` [example](#configuration-setup).
+2. Create a `config.toml` file for the staking cli. Refer to `config.toml` [example](#configuration).
 3. Get a Funded Address and populate the `config.toml` with it's private key.
 4. Make sure you have enough tokens in your wallet - **minimum stake: 1,000,000 MON** to register and **sufficient gas** to execute the transactions.
 5. Choose between [cli](#cli-workflow) or [tui](#tui-workflow) mode and execute the `add-validator` workflow as described below.
