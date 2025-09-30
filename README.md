@@ -304,7 +304,7 @@ Register a new validator on the network.
 ```sh
 python main.py add-validator \
 --secp-privkey "{{ VALIDATOR PRIVATE SECP KEY }}" \
---bls-privkey "{{ VALIDATOR PRIVATE SECP KEY }}" \
+--bls-privkey "{{ VALIDATOR PRIVATE BLS KEY }}" \
 --auth-address "{{ AN ADDRESS THAT YOU CONTROL }}" \
 --amount 1000000 \
 --config-path ~/config.toml
