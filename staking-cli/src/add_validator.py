@@ -75,7 +75,7 @@ def register_validator(config: dict):
 
     # Verify inputs and derivations
     is_confirmed = Confirm.ask(
-        "[bold yellow]Do the dervied public keys match? (make sure that the private keys were recovered using monad-keystore) [/]",
+        "[bold yellow]Do the derived public keys match? (make sure that the private keys were recovered using monad-keystore) [/]",
         default=False # Make the safe option the default
     )
 
@@ -155,7 +155,7 @@ def register_validator_cli(config: dict, secp_privkey: str, bls_privkey: str, au
     log.debug(add_validator_call_data)
 
     is_confirmed = Confirm.ask(
-        "[bold yellow]Do the dervied public keys match? (make sure that the private keys were recovered using monad-keystore) [/]",
+        "[bold yellow]Do the derived public keys match? (make sure that the private keys were recovered using monad-keystore) [/]",
         default=False # Make the safe option the default
     )
 
@@ -174,7 +174,7 @@ def register_validator_cli(config: dict, secp_privkey: str, bls_privkey: str, au
         log.error(f"Error while sending tx: {e}")
         return
     log.info(f"Tx status: {receipt.status}")
-    log.info(f"Tx hash: {receipt.transactionHash.hex()}")
+    log.info(f"Tx hash: 0x{receipt.transactionHash.hex()}")
     get_validator_registration_event(config, receipt)
 
 
