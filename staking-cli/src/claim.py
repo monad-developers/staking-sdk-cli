@@ -133,13 +133,12 @@ def claim_pending_rewards(config):
         balance_after = w3.eth.get_balance(delegator_address)
         balance_change = balance_after - balance_before
         # Calculate changes
-        rewards_after = delegator_info_after[1]
-        rewards_claimed = rewards - rewards_after
+        rewards_after = delegator_info_after[2]
+        # rewards_claimed = rewards - rewards_after # Inaccurate
         validation_panel = Panel(
             f'''
             [cyan]Rewards before claiming:[/] [green]{rewards} wei[/]
             [cyan]Rewards after claiming:[/] [green]{rewards_after} wei[/]
-            [cyan]Rewards claimed:[/] [green]{rewards_claimed} wei[/]
             [cyan]Account balance change:[/] [green]{balance_change} wei[/]
             [cyan]Transaction successful![/] [green]✅[/]
             ''',
