@@ -1,3 +1,4 @@
+from typing import Union
 from web3 import Web3
 from src.logger import init_logging
 from src.query import get_validator_info, validator_exists
@@ -26,7 +27,7 @@ def is_valid_amount(amount: int, register=False) -> bool:
             return False
     return True
 
-def is_valid_bls_private_key(private_key: int | str) -> bool:
+def is_valid_bls_private_key(private_key: Union[int, str]) -> bool:
     '''Validates a BLS12-381 private key.'''
     if isinstance(private_key, str):
         try:
@@ -75,7 +76,7 @@ def key_prompt(config: dict, key_type: str):
     '''Ask for private key and validate'''
     colors = config["colors"]
     log = init_logging(config["log_level"].upper())
-    key = Prompt.ask(f"\n[{colors["primary_text"]}]Enter [{colors["main"]}]{key_type.capitalize()} Private Key[/] of the validator[/]")
+    key = Prompt.ask(f"\n[{colors['primary_text']}]Enter [{colors['main']}]{key_type.capitalize()} Private Key[/] of the validator[/]")
     # valdiate input
     if key_type == "secp":
         validation = is_valid_secp256k1_private_key(key)
@@ -103,9 +104,9 @@ def address_prompt(config: dict, address_description: str, default: str = "") ->
     log = init_logging(config["log_level"].upper())
     colors = config["colors"]
     if default:
-        address = Prompt.ask(f"\n[{colors["primary_text"]}]Enter [{colors["main"]}]{address_description}[/] address[/]", default=default)
+        address = Prompt.ask(f"\n[{colors['primary_text']}]Enter [{colors['main']}]{address_description}[/] address[/]", default=default)
     else:
-        address = Prompt.ask(f"\n[{colors["primary_text"]}]Enter [{colors["main"]}]{address_description}[/] address[/]")
+        address = Prompt.ask(f"\n[{colors['primary_text']}]Enter [{colors['main']}]{address_description}[/] address[/]")
 
     if is_valid_address(address):
         return address
@@ -117,7 +118,7 @@ def address_prompt(config: dict, address_description: str, default: str = "") ->
 def val_id_prompt(config: dict) -> int:
     log = init_logging(config["log_level"].upper())
     colors = config["colors"]
-    val_id = Prompt.ask(f"\n[{colors["primary_text"]}]Enter [{colors["main"]}]Validator ID[/][/]")
+    val_id = Prompt.ask(f"\n[{colors['primary_text']}]Enter [{colors['main']}]Validator ID[/][/]")
     try:
         val_id = int(val_id)
     except:
@@ -135,7 +136,7 @@ def amount_prompt(config: dict, method: str = "", description: str = "") -> int:
     '''Ask for amount to delegate/undelegate/withdraw'''
     colors = config["colors"]
     log = init_logging(config["log_level"].upper())
-    amount = Prompt.ask(f"\n[{colors["primary_text"]}]Enter an amount in [{colors["main"]}]MON[/] {description}[/]")
+    amount = Prompt.ask(f"\n[{colors['primary_text']}]Enter an amount in [{colors['main']}]MON[/] {description}[/]")
     try:
         amount = int(amount)
         if amount <= 0:

@@ -28,7 +28,7 @@ def print_query_menu(config):
     menu_text = Align(menu_text, align="left")
     main_panel = Panel(
         menu_text,
-        title=f"[bold {colors["main"]}]Query Menu[/]",
+        title=f"[bold {colors['main']}]Query Menu[/]",
         padding=(0, 10, 0, 0),
         expand=False
     )
@@ -150,15 +150,15 @@ def query(config):
             print_withdrwal_info(withdrawal_info)
         elif choice == "4":
             validator_set = get_validator_set(config)
-            verbose = confirmation_prompt(f"[{colors["secondary_text"]}]Do you want a verbose output?[/]", default=False)
+            verbose = confirmation_prompt(f"[{colors['secondary_text']}]Do you want a verbose output?[/]", default=False)
             print_validator_set(config, validator_set, verbose)
         elif choice == "5":
             validator_set = get_validator_set(config, type="execution")
-            verbose = confirmation_prompt(f"[{colors["secondary_text"]}]Do you want a verbose output?[/]", default=False)
+            verbose = confirmation_prompt(f"[{colors['secondary_text']}]Do you want a verbose output?[/]", default=False)
             print_validator_set(config, validator_set, verbose)
         elif choice == "6":
             validator_set = get_validator_set(config, type="snapshot")
-            verbose = confirmation_prompt(f"[{colors["secondary_text"]}]Do you want a verbose output?[/]", default=False)
+            verbose = confirmation_prompt(f"[{colors['secondary_text']}]Do you want a verbose output?[/]", default=False)
             print_validator_set(config, validator_set, verbose)
         elif choice == "7":
             validator_id = val_id_prompt(config)

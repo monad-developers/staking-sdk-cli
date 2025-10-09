@@ -73,7 +73,7 @@ class StakingCLI:
         menu_text = Align(menu_text, align="left")
         main_panel = Panel(
             menu_text,
-            title=f"[bold {self.colors["main"]}]Staking Cli Menu[/]",
+            title=f"[bold {self.colors['main']}]Staking Cli Menu[/]",
             padding=(0, 10, 0, 0),
             expand=False
         )
