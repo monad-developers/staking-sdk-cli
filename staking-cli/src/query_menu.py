@@ -96,7 +96,7 @@ def print_delegator_info(delegator_info):
 
     console.print(table)
 
-def print_withdrwal_info(withdrawal_info):
+def print_withdrawal_info(withdrawal_info):
     if not withdrawal_info or withdrawal_info[0] == 0:
         console.print("[bold red]❌ No withdrawal request found for this ID![/]")
         console.print("[yellow]💡 You need to call undelegate first to create a withdrawal request or wait for 2 epochs after undelegation.[/]")
@@ -147,7 +147,7 @@ def query(config):
             validator_id = val_id_prompt(config)
             withdrawal_id = int(number_prompt("Enter Withdrawal ID", default="33"))
             withdrawal_info = get_withdrawal_info(config, str(validator_id), address, withdrawal_id)
-            print_withdrwal_info(withdrawal_info)
+            print_withdrawal_info(withdrawal_info)
         elif choice == "4":
             validator_set = get_validator_set(config)
             verbose = confirmation_prompt(f"[{colors["secondary_text"]}]Do you want a verbose output?[/]", default=False)
@@ -213,7 +213,7 @@ def query_cli(config: dict, args: Namespace):
             log.error("Error! Invalid Delegator Address")
             return
         withdrawal_info = get_withdrawal_info(config, str(validator_id), address, withdrawal_id)
-        print_withdrwal_info(withdrawal_info)
+        print_withdrawal_info(withdrawal_info)
     elif args.query == "validator-set":
         set_type = args.type
         if set_type not in ("consensus", "execution", "snapshot"):
