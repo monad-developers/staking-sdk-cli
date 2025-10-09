@@ -41,7 +41,7 @@ GETTER_ABIS = {
 }
 
 VALIDATOR_CREATED_EVENT_ABI = [
-    "event ValidatorCreated(uint64 indexed valId, address indexed auth_delegator)"
+    "event ValidatorCreated(uint64 indexed valId, address indexed auth_delegator, uint256 commission)"
 ]
 
 VALIDATOR_STATUS_CHANGED_EVENT_ABI = [

@@ -195,6 +195,11 @@ def get_validator_registration_event(config, receipt):
             "indexed": True,
             "name": "auth_delegator",
             "type": "address"
+          },
+          {
+            "indexed": False,
+            "name": "commission",
+            "type": "uint256"
           }
         ]
       }
