@@ -225,4 +225,4 @@ def get_validator_registration_event(config, receipt):
         return
     for event in events:
         print()
-        log.info(f"Validator Created! ID: {event['args']['valId']}, Delegator: {event['args']['auth_delegator']}")
+        log.info(f"Validator Created! ID: {event['args']['valId']}, Delegator: {event['args']['auth_delegator']}, Commission: {event['args']['commission']}")
