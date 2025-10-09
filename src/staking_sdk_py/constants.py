@@ -61,5 +61,5 @@ WITHDRAWAL_EVENT_ABI = [
 ]
 
 CLAIM_REWARDS_EVENT_ABI = [
-    "event ClaimRewards(uint64 indexed valId, address indexed delegator, uint256 amount)"
+    "event ClaimRewards(uint64 indexed valId, address indexed delegator, uint256 amount, uint64 epoch)"
 ]
