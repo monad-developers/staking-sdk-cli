@@ -10,6 +10,9 @@ from src.logger import init_logging
 
 console = Console()
 
+# Number of epochs to wait before unstaked tokens can be withdrawn	
+WITHDRAWAL_DELAY = 1
+
 def withdraw_delegation(config: dict):
     # read config
     colors = config["colors"]
@@ -65,12 +68,13 @@ def withdraw_delegation(config: dict):
         try:
             epoch_info = call_getter(w3, 'get_epoch', contract_address)
             current_epoch = epoch_info[0] if epoch_info else 0
+            withdrawal_allowed_epoch = withdrawal_epoch + WITHDRAWAL_DELAY
             console.print(f"[cyan]Current epoch:[/] [green]{current_epoch}[/]")
-            console.print(f"[cyan]Required withdrawal epoch:[/] [green]{withdrawal_epoch}[/]")
+            console.print(f"[cyan]Required withdrawal epoch:[/] [green]{withdrawal_allowed_epoch}[/]")
 
-            if current_epoch < withdrawal_epoch:
-                console.print(f"[bold red]❌ Cannot withdraw yet! Current epoch: {current_epoch}, Need to wait until: {withdrawal_epoch}[/]")
-                console.print(f"[yellow]💡 Please wait {withdrawal_epoch - current_epoch} more epoch(s)[/]")
+            if current_epoch < withdrawal_allowed_epoch:
+                console.print(f"[bold red]❌ Cannot withdraw yet! Current epoch: {current_epoch}, Need to wait until: {withdrawal_allowed_epoch}[/]")
+                console.print(f"[yellow]💡 Please wait {withdrawal_allowed_epoch - current_epoch} more epoch(s)[/]")
                 return
             else:
                 console.print("[bold green]✅ Withdrawal epoch reached - can withdraw now[/]")
@@ -85,7 +89,7 @@ def withdraw_delegation(config: dict):
             [cyan]Withdrawal amount:[/] [green]{withdrawal_amount} wei[/]
             [cyan]Epoch check:[/] [green]Ready ✅[/]
             [cyan]Current epoch:[/] [green]{current_epoch}[/]
-            [cyan]Required epoch:[/] [green]{withdrawal_epoch}[/]
+            [cyan]Required epoch:[/] [green]{withdrawal_allowed_epoch}[/]
             ''',
             title="[bold green]Preflight Results[/]",
             border_style="green",
@@ -142,12 +146,13 @@ def withdraw_delegation_cli(config: dict, val_id: int, withdrawal_id: int):
     try:
         epoch_info = call_getter(w3, 'get_epoch', contract_address)
         current_epoch = epoch_info[0] if epoch_info else 0
+        withdrawal_allowed_epoch = withdrawal_epoch + WITHDRAWAL_DELAY
         log.info(f"Current epoch: {current_epoch}")
-        log.info(f"Required withdrawal epoch: {withdrawal_epoch}")
+        log.info(f"Required withdrawal epoch: {withdrawal_allowed_epoch}")
 
-        if current_epoch < withdrawal_epoch:
-            log.error(f"Cannot withdraw yet! Current epoch: {current_epoch}, Need to wait until: {withdrawal_epoch}")
-            log.error(f"Please wait {withdrawal_epoch - current_epoch} more epoch(s)")
+        if current_epoch < withdrawal_allowed_epoch:
+            log.error(f"Cannot withdraw yet! Current epoch: {current_epoch}, Need to wait until: {withdrawal_allowed_epoch}")
+            log.error(f"Please wait {withdrawal_allowed_epoch - current_epoch} more epoch(s)")
             return
         else:
             log.info("✅ Withdrawal epoch reached - can withdraw now")
