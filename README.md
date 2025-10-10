@@ -298,7 +298,8 @@ Register a new validator on the network.
 
 - Minimum stake to join register validator: 1,000,000 MON
 - Valid SECP256k1 private key (64 hex chars, no 0x prefix)
-- Valid BLS private key (64 hex chars, with 0x prefix)
+- Valid BLS private key (64 hex chars, **WITH** 0x prefix) 
+    - 🛑 CAUTION: Don't forget to add the "0x" prefix unlike SECP private key format.
 - Make sure the `auth-address` is an address you control and intend to perform validator operations with. This can be the same as the funded address. You can provide another address here to decouple staking and operations.
 
 ```sh
@@ -500,7 +501,8 @@ python main.py tui --config-path ~/config.toml
 
 - **SECP Private Key**: 64 hexadecimal characters, no `0x` prefix
   - Example: `a1b2c3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef`
-- **BLS Private Key**: 64 hexadecimal characters, with `0x` prefix
+- **BLS Private Key**: 64 hexadecimal characters, **WITH** `0x` prefix
+  - 🛑 CAUTION: Don't forget to add the **"0x"** prefix unlike SECP private key format.
   - Example: `0x1a2b3c4d5e6f7890123456789abcdef0123456789abcdef0123456789abcdef`
 
 ### Gas Requirements
