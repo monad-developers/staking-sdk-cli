@@ -118,7 +118,7 @@ def register_validator_cli(config: dict, secp_privkey: str, bls_privkey: str, au
     # Input validation
     try:
         if not is_valid_bls_private_key(bls_privkey):
-            log.error("Key validation failed! Verify bls key")
+            log.error("Key validation failed! Verify bls key and don't forget to add 0x prefix")
             return
         if not is_valid_secp256k1_private_key(secp_privkey):
             log.error("Key validation failed! Verify secp key")
