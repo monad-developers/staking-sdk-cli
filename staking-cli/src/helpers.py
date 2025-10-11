@@ -40,11 +40,10 @@ def is_valid_bls_private_key(private_key: Union[int, str]) -> bool:
     else:
         return False # Invalid type
 
-    # Apply modulo reduction if key is larger than curve order
-    if key_int >= curve_order:
-        key_int = key_int % curve_order
+    if not 0 < key_int < curve_order:
+        return False
 
-    return 0 < key_int < curve_order
+    return True
 
 def is_valid_secp256k1_private_key(hex_private_key: str) -> bool:
     '''Validates a secp256k1 private key in hexadecimal format.'''
