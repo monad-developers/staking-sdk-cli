@@ -123,7 +123,7 @@ highlight = "yellow"
 1. Setup staking cli according to the [installation instructions](#installation).
 2. Create a `config.toml` file for the staking cli. Refer to `config.toml` [example](#configuration).
 3. Get a Funded Address and populate the `config.toml` with its private key.
-4. Make sure you have enough tokens in your wallet - **minimum stake: 1,000,000 MON** to register and **sufficient gas** to execute the transactions.
+4. Make sure you have enough tokens in your wallet - **minimum stake: 100,000 MON** to register and **sufficient gas** to execute the transactions.
 5. Choose between [cli](#cli-workflow) or [tui](#tui-workflow) mode and execute the `add-validator` workflow as described below.
 6. Follow the debug and troubleshooting steps below in case of unexpected behaviour or general issues.
 
@@ -153,7 +153,7 @@ python main.py add-validator \
 --secp-privkey "{{ SECP privkey from id-secp }}" \
 --bls-privkey "{{ BLS privkey from id-bls }}" \
 --auth-address "{{ auth-address (YOU MUST CONTROL THIS ADDRESS) }}" \
---amount 1_000_000 \
+--amount 100_000 \
 --config-path ~/config.toml
 ```
 
@@ -203,7 +203,7 @@ python main.py tui --config-path /path/to/config.toml
 INFO     Validator Created! ID: 1, Delegator: 0xF88.....
 ```
 
-- Make sure you are part of the execution set (Only after 50 million stake has been given)
+- Make sure you are part of the execution set
 
 ```sh
 python main.py query validator-set --type execution --config-path ~/config.toml | grep {{ SECP PUBKEY }}
@@ -296,9 +296,9 @@ Register a new validator on the network.
 
 **Requirements:**
 
-- Minimum stake to join register validator: 1,000,000 MON
+- Minimum stake to join register validator: 100,000 MON
 - Valid SECP256k1 private key (64 hex chars, **WITHOUT** 0x prefix)
-- Valid BLS private key (64 hex chars, **WITH** 0x prefix) 
+- Valid BLS private key (64 hex chars, **WITH** 0x prefix)
 - Make sure the `auth-address` is an address you control and intend to perform validator operations with. This can be the same as the funded address. You can provide another address here to decouple staking and operations.
 
 ```sh
@@ -306,7 +306,7 @@ python main.py add-validator \
 --secp-privkey "{{ VALIDATOR PRIVATE SECP KEY }}" \
 --bls-privkey "{{ VALIDATOR PRIVATE BLS KEY }}" \
 --auth-address "{{ AN ADDRESS THAT YOU CONTROL }}" \
---amount 1000000 \
+--amount 100000 \
 --config-path ~/config.toml
 ```
 
