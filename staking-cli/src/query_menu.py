@@ -7,9 +7,12 @@ from rich.align import Align
 from src.helpers import (
     address_prompt,
     is_valid_address,
+    is_valid_secp256k1_public_key,
     number_prompt,
     confirmation_prompt,
     val_id_prompt,
+    pub_key_prompt,
+    get_eth_address_from_pubkey,
 )
 from src.logger import init_logging
 from src.query import (
@@ -22,6 +25,7 @@ from src.query import (
     get_delegators_list,
     get_tx_by_hash,
     get_epoch_info,
+    get_val_id_from_secp_pubkey,
 )
 
 console = Console()
@@ -73,9 +77,9 @@ def print_validator(val_info, val_id, verbose):
         ("bls Pubkey", ""),
     ]
 
-    table = Table(title=f"Validator Info of: [red]val-id {val_id}[/]")
+    table = Table(title=f"Validator Info f: [red]val-id {val_id}[/]")
     table.add_column("Field", style="yellow")
-    table.add_column("Value", style="cyan")
+    table.add_column(f"Values for val-id: [yellow]{val_id}[/]", style="cyan")
     console = Console()
     if verbose:
         for i in range(0, len(val_info)):
@@ -191,10 +195,19 @@ def query(config):
     while True:
         choice = print_query_menu(config)
         if choice == "1":
-            validator_id = val_id_prompt(config)
+            # validator_id = val_id_prompt(config)
+            pub_key_hex = pub_key_prompt(config, "secp")
+            try:
+                validator_eth_address = get_eth_address_from_pubkey(pub_key_hex)
+            except Exception as e:
+                log.error(f"Error occured while deriving address from pubkey: {e}")
+                continue
+            validator_id = get_val_id_from_secp_pubkey(config, validator_eth_address)
             validator_info = get_validator_info(config, validator_id)
-            # verbose = confirmation_prompt(f"[{colors["secondary_text"]}]Validator exists! Do you want a verbose output?[/]", default=False)
-            print_validator(validator_info, validator_id, True)
+            if validator_exists(validator_info):
+                print_validator(validator_info, validator_id, True)
+            else:
+                log.error("Error! Validator is not registered")
         elif choice == "2":
             w3 = Web3(Web3.HTTPProvider(config["rpc_url"]))
             delegator_address = w3.eth.account.from_key(
@@ -269,12 +282,21 @@ def query(config):
 def query_cli(config: dict, args: Namespace):
     log = init_logging(config["log_level"])
     if args.query == "validator":
-        validator_id = args.validator_id
+        pub_key_hex = args.secp_pubkey
+        if not is_valid_secp256k1_public_key(pub_key_hex):
+            log.error(f"Error: Invalid SECP public key")
+            return
+        try:
+            validator_eth_address = get_eth_address_from_pubkey(pub_key_hex)
+        except Exception as e:
+            log.error(f"Error occured while deriving address from pubkey: {e}")
+            return
+        validator_id = get_val_id_from_secp_pubkey(config, validator_eth_address)
         validator_info = get_validator_info(config, validator_id)
         if validator_exists(validator_info):
             print_validator(validator_info, validator_id, True)
         else:
-            log.error("Error! Invalid Validator ID")
+            log.error("Error! Validator is not registered")
             return
     elif args.query == "delegator":
         w3 = Web3(Web3.HTTPProvider(config["rpc_url"]))

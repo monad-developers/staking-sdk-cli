@@ -1,5 +1,6 @@
 from typing import Union
 from web3 import Web3
+from eth_keys import keys
 from src.logger import init_logging
 from src.query import get_validator_info, validator_exists
 from py_ecc.optimized_bls12_381 import curve_order
@@ -72,6 +73,54 @@ def is_valid_secp256k1_private_key(hex_private_key: str) -> bool:
     return 0 < key_int < SECP256K1_ORDER
 
 
+def is_valid_secp256k1_public_key(hex_public_key: str) -> bool:
+    """Validates if a given string is a correctly formatted secp256k1 public key"""
+    if not isinstance(hex_public_key, str):
+        return False
+
+    # 1. Standardize input: Remove '0x' prefix if it exists
+    if hex_public_key.startswith("0x"):
+        key_hex = hex_public_key[2:]
+    else:
+        key_hex = hex_public_key
+
+    # 2. Check for valid hexadecimal characters
+    try:
+        integer = int(key_hex, 16)
+    except Exception as e:
+        raise ValueError(f"Invalid hex for pubkey: {e}")
+
+    key_len_chars = len(key_hex)
+    prefix = key_hex[:2]
+
+    # Must be 66 chars (33 bytes) and start with '02' or '03'
+    if key_len_chars == 66:
+        if prefix == "02" or prefix == "03":
+            return True
+        else:
+            return False  # Wrong prefix for compressed key
+
+        # Invalid length
+    return False
+
+
+def get_eth_address_from_pubkey(hex_public_key: str) -> str:
+    if hex_public_key.startswith("0x"):
+        hex_public_key = hex_public_key[2:]
+    else:
+        hex_public_key = hex_public_key
+    public_key_bytes = bytes.fromhex(hex_public_key)
+    try:
+        public_key_obj = keys.PublicKey.from_compressed_bytes(public_key_bytes)
+        uncompressed_key_bytes_64 = public_key_obj.to_bytes()
+    except Exception as e:
+        raise ValueError(f"Invalid public key point. Error: {e}")
+    keccak_hash = Web3.keccak(uncompressed_key_bytes_64)
+    address_bytes = keccak_hash[-20:]
+    address = Web3.to_checksum_address(address_bytes)
+    return address
+
+
 def number_prompt(description: str, range: list = [], default: str = ""):
     if range:
         return Prompt.ask(
@@ -100,6 +149,28 @@ def key_prompt(config: dict, key_type: str):
         log.error(f"\nEnter a valid key, instead of: {key}")
         # ask for input again
         key = key_prompt(config, key_type)
+        return key
+
+
+def pub_key_prompt(config: dict, key_type: str):
+    """Ask for public key and validate"""
+    colors = config["colors"]
+    log = init_logging(config["log_level"].upper())
+    key = Prompt.ask(
+        f"\n[{colors['primary_text']}]Enter [{colors['main']}]{key_type.capitalize()} Public Key[/] of the validator[/]"
+    )
+    if key_type == "secp":
+        try:
+            validation = is_valid_secp256k1_public_key(key)
+        except Exception as e:
+            log.error(f"Error while validating secp public key: {e}")
+            validation = False
+    if validation:
+        return str(key)
+    else:
+        log.error(f"\nEnter a valid key, instead of: {key}")
+        # ask for input again
+        key = pub_key_prompt(config, key_type)
         return key
 
 
