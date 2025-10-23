@@ -220,7 +220,7 @@ python main.py query validator-set --type execution --config-path ~/config.toml 
 - Fetch validator info
 
 ```sh
-python main.py query validator --validator-id 1 --config-path ~/config.toml
+python main.py query validator --secp-pubkey 028bcac2c1e57b60ae93b47de912a5a48f5ec7675e7c608baeffb2fd33ff7baaef --config-path ~/config.toml
 ```
 
 - Verify all values match in the output
@@ -411,7 +411,7 @@ INFO     Commission successfully changed from 10.0% to 5.0% for validator 1
 ### Query Validator Information
 
 ```sh
-python main.py query validator --validator-id 1 --config-path ~/config.toml
+python main.py query validator --secp-pubkey 028bcac2c1e57b60ae93b47de912a5a48f5ec7675e7c608baeffb2fd33ff7baaef --config-path ~/config.toml
 ```
 
 ### Query Delegator Information
