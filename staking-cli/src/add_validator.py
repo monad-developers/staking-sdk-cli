@@ -1,7 +1,6 @@
 import warnings
 from web3 import Web3
 from staking_sdk_py.generateCalldata import add_validator
-from staking_sdk_py.generateTransaction import send_transaction
 from staking_sdk_py.keyGenerator import KeyGenerator
 from staking_sdk_py.signer_factory import Signer
 from rich.console import Console
@@ -21,6 +20,7 @@ from src.helpers import (
     is_valid_bls_private_key,
     is_valid_address,
     is_valid_amount,
+    send_transaction,
 )
 
 console = Console()

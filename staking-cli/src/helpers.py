@@ -4,7 +4,20 @@ from src.logger import init_logging
 from src.query import get_validator_info, validator_exists
 from py_ecc.optimized_bls12_381 import curve_order
 from rich.prompt import Prompt, Confirm
+from rich.console import Console
 
+from staking_sdk_py import generateTransaction
+from staking_sdk_py.signer_factory import LedgerSigner
+
+def send_transaction(*args, **kwargs):
+    signer = args[1]
+    console = Console()
+    if isinstance(signer, LedgerSigner):
+        console.print("\n[yellow]Please review and sign transaction on hardware wallet...")
+    else:
+        console.print("\n[yellow]Signing with a local private key (non-production)...")
+        console.print("[red]For mainnet, use a hardware wallet and verify on-device.")
+    return generateTransaction.send_transaction(*args, **kwargs)
 
 def wei(amount: int) -> int:
     """Convert MON to wei"""
