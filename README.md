@@ -89,14 +89,25 @@ Create a file named `config.toml` in your preferred location (e.g., home directo
 # Main application settings
 title = "staking_cli"
 rpc_url = "https://your-monad-rpc-endpoint.com"
-chain_id = 30143
+chain_id = 30143  # testnet 2
+# chain_id = 10143  # testnet 1
 contract_address = "0x0000000000000000000000000000000000001000"
 # Log levels: debug, info, warning, error
 log_level = "info"
 
 [staking]
-# IMPORTANT: Replace with your actual private key (without 0x prefix)
-funded_address_private_key = "0xYOUR_PRIVATE_KEY_HERE"
+type = "local"   # optional, defaults to "local"
+
+# IMPORTANT
+# Replace with your actual private key for the funded or authorized address (WITHOUT 0x prefix)
+# Or ignore this and set the FUNDED_ADDRESS_PRIVATE_KEY env var for better security
+funded_address_private_key = "YOUR_PRIVATE_KEY_HERE"
+
+# Recommended alternative
+# Use a Ledger hardware wallet for even better security
+# Remember to enable blind signing on ledger app
+# type = "ledger"  # or set STAKING_TYPE in the environment
+# derivation_path = "44'/60'/0'/0/0"  # Optional, defaults to this path if not specified, or set DERIVATION_PATH in the environment
 
 [colors]
 border = "white"
@@ -122,7 +133,7 @@ highlight = "yellow"
 
 1. Setup staking cli according to the [installation instructions](#installation).
 2. Create a `config.toml` file for the staking cli. Refer to `config.toml` [example](#configuration).
-3. Get a Funded Address and populate the `config.toml` with its private key.
+3. Get a Funded Address and populate the `config.toml` with its private key. For better security, export `FUNDED_ADDRESS_PRIVATE_KEY` as an env var, or even better, use a Ledger hardware wallet and adjust `config.toml` accordingly.
 4. Make sure you have enough tokens in your wallet - **minimum stake: 100,000 MON** to register and **sufficient gas** to execute the transactions.
 5. Choose between [cli](#cli-workflow) or [tui](#tui-workflow) mode and execute the `add-validator` workflow as described below.
 6. Follow the debug and troubleshooting steps below in case of unexpected behaviour or general issues.

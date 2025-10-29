@@ -17,6 +17,7 @@ from src.change_commission import change_validator_commission, change_validator_
 from src.query_menu import query, query_cli
 from src.parser import init_parser
 from src.helpers import number_prompt, confirmation_prompt
+from src.signer import create_signer
 
 class StakingCLI:
     def __init__(self):
@@ -38,7 +39,29 @@ class StakingCLI:
         # config and logging
         self.read_config(self.args.config_path)
         self.log = init_logging(self.config["log_level"].upper())
+        self.init_signer()
         self.colors = self.config["colors"]
+
+
+    def init_signer(self):
+        '''Initializes the signer based on config'''
+        try:
+            if self.args.command != "query":
+                self.signer = create_signer(self.config)
+            else:
+                self.log.debug("Skipping signer creation for queries.")
+        except Exception as e:
+            if (
+                self.config["staking"]["type"].lower() == "ledger"
+                and (
+                    "ledgereth" in str(type(e)).lower()
+                    or "LedgerError" in str(type(e))
+                )
+            ):
+                self.log.error(f"Ledger device error: Please check that your Ledger is connected, unlocked, and the Ethereum app is open.")
+            else:
+                self.log.error(f"Unexpected error while creating signer: {e!r}")
+            sys.exit()
 
 
     def read_config(self, config_path):
@@ -83,28 +106,28 @@ class StakingCLI:
             choice = number_prompt("Enter a number as a choice", choices, default="9")
 
             if choice == "1":
-                register_validator(self.config)
+                register_validator(self.config, self.signer)
                 self.log.info("Exited Add Validator\n\n")
             elif choice == "2":
-                delegate_to_validator(self.config)
+                delegate_to_validator(self.config, self.signer)
                 self.log.info("Exited Delegate\n\n")
             elif choice == "3":
-                undelegate_from_validator(self.config)
+                undelegate_from_validator(self.config, self.signer)
                 self.log.info("Exited Undelegate\n\n")
             elif choice == "4":
-                withdraw_delegation(self.config)
+                withdraw_delegation(self.config, self.signer)
                 self.log.info("Exited Withdraw\n\n")
             elif choice == "5":
-                claim_pending_rewards(self.config)
+                claim_pending_rewards(self.config, self.signer)
                 self.log.info("Exited Claim Rewards\n\n")
             elif choice == "6":
-                compound_rewards(self.config)
+                compound_rewards(self.config, self.signer)
                 self.log.info("Exited Compound Rewards\n\n")
             elif choice == "7":
-                change_validator_commission(self.config)
+                change_validator_commission(self.config, self.signer)
                 self.log.info("Exited Change Commission\n\n")
             elif choice == "8":
-                query(self.config)
+                query(self.config, self.signer)
                 self.log.info("Exited Query Menu\n\n")
             elif choice == "9":
                 self.log.info("Staking CLI has been exited!")
@@ -123,30 +146,30 @@ class StakingCLI:
             bls_privkey = self.args.bls_privkey
             auth_address = self.args.auth_address
             amount = self.args.amount
-            register_validator_cli(self.config, secp_privkey, bls_privkey, auth_address, amount)
+            register_validator_cli(self.config, self.signer, secp_privkey, bls_privkey, auth_address, amount)
         elif self.args.command == "delegate":
             validator_id = self.args.validator_id
             amount = self.args.amount
-            delegate_to_validator_cli(self.config, validator_id, amount)
+            delegate_to_validator_cli(self.config, self.signer, validator_id, amount)
         elif self.args.command == "undelegate":
             validator_id = self.args.validator_id
             withdrawal_id = self.args.withdrawal_id
             amount = self.args.amount
-            undelegate_from_validator_cli(self.config, validator_id, amount, withdrawal_id)
+            undelegate_from_validator_cli(self.config, self.signer, validator_id, amount, withdrawal_id)
         elif self.args.command == "withdraw":
             validator_id = self.args.validator_id
             withdrawal_id = self.args.withdrawal_id
-            withdraw_delegation_cli(self.config, validator_id, withdrawal_id)
+            withdraw_delegation_cli(self.config, self.signer, validator_id, withdrawal_id)
         elif self.args.command == "claim-rewards":
             validator_id = self.args.validator_id
-            claim_pending_rewards_cli(self.config, validator_id)
+            claim_pending_rewards_cli(self.config, self.signer, validator_id)
         elif self.args.command == "compound-rewards":
             validator_id = self.args.validator_id
-            compound_rewards_cli(self.config, validator_id)
+            compound_rewards_cli(self.config, self.signer, validator_id)
         elif self.args.command == "change-commission":
             validator_id = self.args.validator_id
             commission_percentage = self.args.commission
-            change_validator_commission_cli(self.config, validator_id, commission_percentage)
+            change_validator_commission_cli(self.config, self.signer, validator_id, commission_percentage)
         elif self.args.command == "query":
             query_cli(self.config, self.args)
 

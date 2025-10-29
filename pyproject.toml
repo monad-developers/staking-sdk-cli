@@ -20,12 +20,16 @@ classifiers = [
 ]
 dependencies = [
     "blake3>=0.8.0",
-    "eth-keys>=0.4.0",
+    "eth-keys>=0.7.0",
     "py-ecc>=5.2.0",
     "eth-abi>=5.2.0",
     "web3>=6.0.0",
     "rich>=14.1.0",
     "toml>=0.10.2",
+    "eth-account>=0.13.7",
+    "ledgereth>=0.10.0",
+    "eth-typing>=5.2.1",
+    "eth-utils>=5.3.1",
 ]
 
 [project.urls]

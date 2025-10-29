@@ -4,6 +4,7 @@ from rich.panel import Panel
 from rich.table import Table
 from staking_sdk_py.generateCalldata import change_commission
 from staking_sdk_py.generateTransaction import send_transaction
+from staking_sdk_py.signer_factory import Signer
 from src.helpers import val_id_prompt, confirmation_prompt
 from src.query import validator_exists, get_validator_info
 from src.logger import init_logging
@@ -11,15 +12,14 @@ from src.logger import init_logging
 console = Console()
 
 
-def change_validator_commission(config: dict):
+def change_validator_commission(config: dict, signer: Signer):
     colors = config["colors"]
     contract_address = config["contract_address"]
-    funded_private_key = config["staking"]["funded_address_private_key"]
     rpc_url = config["rpc_url"]
     chain_id = config["chain_id"]
 
     w3 = Web3(Web3.HTTPProvider(rpc_url))
-    auth_address = w3.eth.account.from_key(funded_private_key).address
+    auth_address = signer.get_address()
 
     # ===== COMMISSION PARAMETERS  =====
     validator_id = val_id_prompt(config)
@@ -92,7 +92,7 @@ def change_validator_commission(config: dict):
         try:
             tx_hash = send_transaction(
                 w3,
-                funded_private_key,
+                signer,
                 contract_address,
                 calldata_change_commission,
                 chain_id,
@@ -133,12 +133,11 @@ def change_validator_commission(config: dict):
 
 
 def change_validator_commission_cli(
-    config: dict, val_id: int, commission_percentage: float
+    config: dict, signer: Signer, val_id: int, commission_percentage: float
 ):
     log = init_logging(config["log_level"])
 
     contract_address = config["contract_address"]
-    funded_private_key = config["staking"]["funded_address_private_key"]
     rpc_url = config["rpc_url"]
     chain_id = config["chain_id"]
 
@@ -177,7 +176,7 @@ def change_validator_commission_cli(
     try:
         tx_hash = send_transaction(
             w3,
-            funded_private_key,
+            signer,
             contract_address,
             calldata_change_commission,
             chain_id,

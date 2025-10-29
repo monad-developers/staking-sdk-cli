@@ -3,6 +3,7 @@ from web3 import Web3
 from staking_sdk_py.generateCalldata import add_validator
 from staking_sdk_py.generateTransaction import send_transaction
 from staking_sdk_py.keyGenerator import KeyGenerator
+from staking_sdk_py.signer_factory import Signer
 from rich.console import Console
 from rich.prompt import Confirm
 from rich.prompt import Prompt
@@ -25,7 +26,7 @@ from src.helpers import (
 console = Console()
 
 
-def register_validator(config: dict):
+def register_validator(config: dict, signer: Signer):
     log = init_logging(config["log_level"].upper())
     # Get privkeys of Validators
     secp_privkey_hex = key_prompt(config, key_type="secp")
@@ -46,12 +47,11 @@ def register_validator(config: dict):
 
     # from config
     contract_address = config["contract_address"]
-    funded_private_key = config["staking"]["funded_address_private_key"]
     rpc_url = config["rpc_url"]
     chain_id = config["chain_id"]
 
     w3 = Web3(Web3.HTTPProvider(rpc_url))
-    funded_address = w3.eth.account.from_key(funded_private_key).address
+    funded_address = signer.get_address()
     amount = wei(
         amount_prompt(
             config,
@@ -91,8 +91,8 @@ def register_validator(config: dict):
         f"[green]{auth_address}[/]",
     )
     table.add_row(
-        "[cyan][bold red]Funded Address's Private Key[/] to use for tx:[/]",
-        f"[green]{funded_private_key}[/]",
+        "[cyan][bold red]Funded Address[/] to use for tx:[/]",
+        f"[green]{funded_address}[/]",
     )
     table.add_row("[cyan][bold red]RPC[/] to use for tx:[/]", f"[green]{rpc_url}[/]")
     table.add_row(
@@ -133,7 +133,7 @@ def register_validator(config: dict):
     try:
         tx_hash = send_transaction(
             w3,
-            funded_private_key,
+            signer,
             contract_address,
             add_validator_call_data,
             chain_id,
@@ -161,7 +161,7 @@ def register_validator(config: dict):
 
 
 def register_validator_cli(
-    config: dict, secp_privkey: str, bls_privkey: str, auth_address: str, amount: int
+    config: dict, signer: Signer, secp_privkey: str, bls_privkey: str, auth_address: str, amount: int
 ):
     log = init_logging(config["log_level"].upper())
 
@@ -201,7 +201,6 @@ def register_validator_cli(
 
     # from config
     contract_address = config["contract_address"]
-    funded_private_key = config["staking"]["funded_address_private_key"]
     rpc_url = config["rpc_url"]
     chain_id = config["chain_id"]
 
@@ -225,7 +224,7 @@ def register_validator_cli(
     try:
         tx_hash = send_transaction(
             w3,
-            funded_private_key,
+            signer,
             contract_address,
             add_validator_call_data,
             chain_id,

@@ -6,6 +6,7 @@ from rich.table import Table
 from staking_sdk_py.callGetters import call_getter
 from staking_sdk_py.generateCalldata import delegate
 from staking_sdk_py.generateTransaction import send_transaction
+from staking_sdk_py.signer_factory import Signer
 from src.helpers import wei, amount_prompt, val_id_prompt, confirmation_prompt, count_zeros, is_valid_amount
 from src.query_menu import print_delegator_info
 from src.query import validator_exists, get_validator_info
@@ -13,16 +14,15 @@ from src.logger import init_logging
 
 console = Console()
 
-def delegate_to_validator(config: dict):
+def delegate_to_validator(config: dict, signer: Signer):
     # read config
     colors = config["colors"]
     contract_address = config["contract_address"]
-    funded_private_key = config["staking"]["funded_address_private_key"]
     rpc_url = config["rpc_url"]
     chain_id = config["chain_id"]
 
     w3 = Web3(Web3.HTTPProvider(rpc_url))
-    delegator_address = w3.eth.account.from_key(funded_private_key).address
+    delegator_address = signer.get_address()
 
     # ===== DELEGATION PARAMETERS  =====
     delegation_amount = amount_prompt(config, description="to delegate to validator")
@@ -41,7 +41,7 @@ def delegate_to_validator(config: dict):
     if confirmation:
         calldata_delegate = delegate(validator_id)
         try:
-            tx_hash = send_transaction(w3, funded_private_key, contract_address, calldata_delegate, chain_id, amount)
+            tx_hash = send_transaction(w3, signer, contract_address, calldata_delegate, chain_id, amount)
             receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
         except Exception as e:
             console.print(f"Error! while trying to send tx: {e}")
@@ -88,7 +88,7 @@ def delegate_to_validator(config: dict):
                         print_delegator_info(delegator_info)
                         console.print(Panel("[bold green]✅ Delegation Complete![/]", border_style="green"))
 
-def delegate_to_validator_cli(config: dict, val_id: int, amount: int):
+def delegate_to_validator_cli(config: dict, signer: Signer, val_id: int, amount: int):
     log = init_logging(config["log_level"])
     # Input validation
     try:
@@ -105,7 +105,6 @@ def delegate_to_validator_cli(config: dict, val_id: int, amount: int):
 
     # read config
     contract_address = config["contract_address"]
-    funded_private_key = config["staking"]["funded_address_private_key"]
     rpc_url = config["rpc_url"]
     chain_id = config["chain_id"]
     w3 = Web3(Web3.HTTPProvider(rpc_url))
@@ -116,7 +115,7 @@ def delegate_to_validator_cli(config: dict, val_id: int, amount: int):
 
     # send tx
     try:
-        tx_hash = send_transaction(w3, funded_private_key, contract_address, calldata_delegate, chain_id, amount)
+        tx_hash = send_transaction(w3, signer, contract_address, calldata_delegate, chain_id, amount)
         receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
     except Exception as e:
         log.error(f"Error! while trying to send tx: {e}")

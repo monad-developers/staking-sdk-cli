@@ -1,5 +1,6 @@
 from argparse import Namespace
 from web3 import Web3
+from staking_sdk_py.signer_factory import Signer
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
@@ -185,7 +186,7 @@ def print_epoch(epoch_info):
     console.print(table)
 
 
-def query(config):
+def query(config: dict, signer: Signer):
     log = init_logging(config["log_level"])
     colors = config["colors"]
     while True:
@@ -197,9 +198,7 @@ def query(config):
             print_validator(validator_info, validator_id, True)
         elif choice == "2":
             w3 = Web3(Web3.HTTPProvider(config["rpc_url"]))
-            delegator_address = w3.eth.account.from_key(
-                config["staking"]["funded_address_private_key"]
-            ).address
+            delegator_address = signer.get_address()
             address = address_prompt(
                 config, "Enter delegator address:", default=delegator_address
             )
@@ -208,9 +207,7 @@ def query(config):
             print_delegator_info(delegator_info)
         elif choice == "3":
             w3 = Web3(Web3.HTTPProvider(config["rpc_url"]))
-            delegator_address = w3.eth.account.from_key(
-                config["staking"]["funded_address_private_key"]
-            ).address
+            delegator_address = signer.get_address()
             address = address_prompt(
                 config, "Enter delegator address:", default=delegator_address
             )
@@ -247,9 +244,7 @@ def query(config):
             print_delegators(delegators_list, validator_id)
         elif choice == "8":
             w3 = Web3(Web3.HTTPProvider(config["rpc_url"]))
-            delegator_address = w3.eth.account.from_key(
-                config["staking"]["funded_address_private_key"]
-            ).address
+            delegator_address = signer.get_address()
             address = address_prompt(
                 config, "Enter delegator address:", default=delegator_address
             )
