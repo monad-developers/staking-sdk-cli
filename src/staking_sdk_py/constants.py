@@ -19,6 +19,7 @@ GET_EPOCH_SELECTOR = "757991a8"
 GET_VALIDATOR_SELECTOR = "2b6d639a"
 GET_DELEGATOR_SELECTOR = "573c1ce0"
 GET_WITHDRAWAL_REQUEST_SELECTOR = "56fa2045"
+GET_PROPOSER_VAL_ID = "fbacb0be"
 GET_CONSENSUS_VALSET_SELECTOR = "fb29b729"
 GET_SNAPSHOT_VALSET_SELECTOR = "de66a368"
 GET_EXECUTION_VALSET_SELECTOR = "7cb074df"
@@ -33,6 +34,7 @@ GETTER_ABIS = {
     "get_validator": ["address", "uint256", "uint256", "uint256", "uint256", "uint256", "uint256", "uint256","uint256", "uint256", "bytes", "bytes"],
     "get_delegator": ["uint256", "uint256", "uint256", "uint256", "uint256", "uint64", "uint64"],
     "get_withdrawal_request": ["uint256", "uint256", "uint64"],  
+    "get_proposer_val_id": ["uint64"],
     "get_consensus_valset": ["bool", "uint64","uint64[]"],  
     "get_snapshot_valset": ["bool", "uint64","uint64[]"],   
     "get_execution_valset": ["bool", "uint64","uint64[]"],  

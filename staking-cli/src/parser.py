@@ -206,6 +206,9 @@ def init_parser() -> argparse.ArgumentParser:
         "delegations", help="Show delegations done by an address"
     )
     epoch_parser = query_subparser.add_parser("epoch", help="Show epoch info")
+    proposer_parser = query_subparser.add_parser(
+        "proposer-val-id", help="Show last proposer val-id"
+    )
 
     # val_info_parser
     val_info_parser.add_argument(
@@ -311,6 +314,14 @@ def init_parser() -> argparse.ArgumentParser:
 
     # epoch_parser
     epoch_parser.add_argument(
+        "--config-path",
+        type=str,
+        default="./config.toml",
+        help="Add a path to a config.toml file",
+    )
+
+    # proposer_parser
+    proposer_parser.add_argument(
         "--config-path",
         type=str,
         default="./config.toml",

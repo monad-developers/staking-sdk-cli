@@ -55,6 +55,13 @@ def get_epoch_info(config: dict):
     epoch_info = call_getter(w3,'get_epoch', contract_address)
     return epoch_info
 
+def get_proposer_val_id(config: dict):
+    contract_address = config["contract_address"]
+    rpc_url = config["rpc_url"]
+    w3 = Web3(Web3.HTTPProvider(rpc_url))
+    val_id = call_getter(w3,'get_proposer_val_id', contract_address)
+    return val_id
+    
 def get_tx_by_hash(config: dict, tx_hash: str):
     rpc_url = config["rpc_url"]
     try:

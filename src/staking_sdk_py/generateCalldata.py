@@ -76,6 +76,9 @@ def get_delegator(validator_id: Union[int, str], delegator_address: str) -> str:
 def get_withdrawal_request(validator_id: Union[int, str], delegator_address: str, withdrawal_id: int) -> str:
     address_hex = strip_0x(delegator_address)
     return "0x" + constants.GET_WITHDRAWAL_REQUEST_SELECTOR + eth_abi.encode(['uint64', 'address', 'uint8'], [int(validator_id), address_hex, withdrawal_id]).hex()
+    
+def get_proposer_val_id() -> str:
+    return "0x" + constants.GET_PROPOSER_VAL_ID
 
 def get_consensus_valset(index: Union[int, str]) -> str:
     return "0x" + constants.GET_CONSENSUS_VALSET_SELECTOR + eth_abi.encode(['uint64'], [index]).hex()
