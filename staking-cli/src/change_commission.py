@@ -3,9 +3,8 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 from staking_sdk_py.generateCalldata import change_commission
-from staking_sdk_py.generateTransaction import send_transaction
 from staking_sdk_py.signer_factory import Signer
-from src.helpers import val_id_prompt, confirmation_prompt
+from src.helpers import val_id_prompt, confirmation_prompt, send_transaction
 from src.query import validator_exists, get_validator_info
 from src.logger import init_logging
 

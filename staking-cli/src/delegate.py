@@ -5,9 +5,8 @@ from rich.panel import Panel
 from rich.table import Table
 from staking_sdk_py.callGetters import call_getter
 from staking_sdk_py.generateCalldata import delegate
-from staking_sdk_py.generateTransaction import send_transaction
 from staking_sdk_py.signer_factory import Signer
-from src.helpers import wei, amount_prompt, val_id_prompt, confirmation_prompt, count_zeros, is_valid_amount
+from src.helpers import wei, amount_prompt, val_id_prompt, confirmation_prompt, count_zeros, is_valid_amount, send_transaction
 from src.query_menu import print_delegator_info
 from src.query import validator_exists, get_validator_info
 from src.logger import init_logging

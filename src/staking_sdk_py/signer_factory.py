@@ -1,12 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import Any
+
 from eth_account import Account
 from eth_account.datastructures import SignedTransaction
-
+from ledgerblue.comm import getDongle
 from ledgereth.accounts import get_account_by_path
-from ledgereth.transactions import sign_transaction, Type2Transaction
 from ledgereth.objects import SignedTransaction as LedgerSignedTransaction
-
+from ledgereth.transactions import Type2Transaction, sign_transaction
 from rlp import encode
 from web3 import Web3
 
@@ -59,10 +58,11 @@ class LedgerSigner(Signer):
     """
 
     def __init__(self, derivation_path: str = "44'/60'/0'/0/0"):
+        self.dongle = getDongle()
         if derivation_path.startswith("m/"):
             derivation_path = derivation_path[2:]
         self.derivation_path = derivation_path
-        self.ledger_account = get_account_by_path(self.derivation_path)
+        self.ledger_account = get_account_by_path(self.derivation_path, self.dongle)
         self.address = Web3.to_checksum_address(self.ledger_account.address)
 
     def get_address(self) -> str:
@@ -84,7 +84,7 @@ class LedgerSigner(Signer):
         )
 
         signed: LedgerSignedTransaction = sign_transaction(
-            ledger_tx, self.derivation_path
+            ledger_tx, self.derivation_path, self.dongle
         )
 
         # Convert ledgereth SignedTransaction to raw bytes and RLP encode

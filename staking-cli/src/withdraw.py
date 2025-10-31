@@ -1,12 +1,11 @@
 from web3 import Web3
 from staking_sdk_py.generateCalldata import withdraw
-from staking_sdk_py.generateTransaction import send_transaction
 from staking_sdk_py.callGetters import call_getter
 from staking_sdk_py.signer_factory import Signer
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
-from src.helpers import number_prompt, confirmation_prompt, val_id_prompt
+from src.helpers import number_prompt, confirmation_prompt, val_id_prompt, send_transaction
 from src.logger import init_logging
 
 console = Console()
