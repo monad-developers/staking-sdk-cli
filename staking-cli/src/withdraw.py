@@ -1,11 +1,11 @@
 from web3 import Web3
 from staking_sdk_py.generateCalldata import withdraw
-from staking_sdk_py.generateTransaction import send_transaction
 from staking_sdk_py.callGetters import call_getter
+from staking_sdk_py.signer_factory import Signer
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
-from src.helpers import number_prompt, confirmation_prompt, val_id_prompt
+from src.helpers import number_prompt, confirmation_prompt, val_id_prompt, send_transaction
 from src.logger import init_logging
 
 console = Console()
@@ -13,11 +13,10 @@ console = Console()
 # Number of epochs to wait before unstaked tokens can be withdrawn	
 WITHDRAWAL_DELAY = 1
 
-def withdraw_delegation(config: dict):
+def withdraw_delegation(config: dict, signer: Signer):
     # read config
     colors = config["colors"]
     contract_address = config["contract_address"]
-    funded_private_key = config["staking"]["funded_address_private_key"]
     rpc_url = config["rpc_url"]
     chain_id = config["chain_id"]
 
@@ -26,7 +25,7 @@ def withdraw_delegation(config: dict):
     withdrawal_id = int(number_prompt("Enter the Withdrawal ID"))
 
     w3 = Web3(Web3.HTTPProvider(rpc_url))
-    delegator_address = w3.eth.account.from_key(funded_private_key).address
+    delegator_address = signer.get_address()
 
     table = Table(show_header=False,
         title="Withdraw Script Inputs",
@@ -100,7 +99,7 @@ def withdraw_delegation(config: dict):
         # Generate calldata and send transaction
         calldata_withdraw = withdraw(validator_id, withdrawal_id)
         try:
-            tx_hash = send_transaction(w3, funded_private_key, contract_address, calldata_withdraw, chain_id, 0)
+            tx_hash = send_transaction(w3, signer, contract_address, calldata_withdraw, chain_id, 0)
             receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
         except Exception as e:
             console.print(f"Error! while trying to send tx: {e}")
@@ -118,16 +117,15 @@ def withdraw_delegation(config: dict):
         tx_table.add_row("To (Contract)", receipt.to)
         console.print(tx_table)
 
-def withdraw_delegation_cli(config: dict, val_id: int, withdrawal_id: int):
+def withdraw_delegation_cli(config: dict, signer: Signer, val_id: int, withdrawal_id: int):
     log = init_logging(config["log_level"])
     # read config
     contract_address = config["contract_address"]
-    funded_private_key = config["staking"]["funded_address_private_key"]
     rpc_url = config["rpc_url"]
     chain_id = config["chain_id"]
 
     w3 = Web3(Web3.HTTPProvider(rpc_url))
-    delegator_address = w3.eth.account.from_key(funded_private_key).address
+    delegator_address = signer.get_address()
 
     # Check if withdrawal request is present
     try:
@@ -164,7 +162,7 @@ def withdraw_delegation_cli(config: dict, val_id: int, withdrawal_id: int):
 
     # send tx
     try:
-        tx_hash = send_transaction(w3, funded_private_key, contract_address, calldata_withdraw, chain_id, 0)
+        tx_hash = send_transaction(w3, signer, contract_address, calldata_withdraw, chain_id, 0)
         receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
     except Exception as e:
         log.error(f"Error while sending tx: {e}")
