@@ -1,25 +1,29 @@
 # Main application settings
 title = "staking_cli"
-rpc_url = "https://your-monad-rpc-endpoint.com"
-chain_id = 30143  # testnet 2
-# chain_id = 10143  # testnet 1
+rpc_url = "https://rpc-testnet.monadinfra.com"
+chain_id = 10143  # testnet
+# chain_id = 143  # mainnet
+
 contract_address = "0x0000000000000000000000000000000000001000"
 # Log levels: debug, info, warning, error
 log_level = "info"
 
 [staking]
-type = "local"   # optional, defaults to "local"
 
-# IMPORTANT
-# Replace with your actual private key for the funded or authorized address (WITHOUT 0x prefix)
-# Or ignore this and set the FUNDED_ADDRESS_PRIVATE_KEY env var for better security
-funded_address_private_key = "YOUR_PRIVATE_KEY_HERE"
+### Replace with your actual private key for the funded or authorized address (WITHOUT 0x prefix)
+### Or ignore this and set the FUNDED_ADDRESS_PRIVATE_KEY env var for better security
+type = "local"
 
-# Recommended alternative
-# Use a Ledger hardware wallet for even better security
-# Remember to enable blind signing on ledger app
-# type = "ledger"  # or set STAKING_TYPE in the environment
-# derivation_path = "44'/60'/0'/0/0"  # Optional, defaults to this path if not specified, or set DERIVATION_PATH in the environment
+# Use private key for delegation
+funded_address_private_key = "0x0000000000000000000000000000000000000000000000000000000000000000"
+
+###
+### RECOMMENDED FOR PRODUCTION
+###
+### Use a Ledger hardware wallet
+### Note: Blind signing needs to be enabled on Ledger Ethereum app
+# type = "ledger"
+# derivation_path = "44'/60'/0'/0/0"  # Optional
 
 [colors]
 border = "white"
