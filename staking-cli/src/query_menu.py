@@ -169,8 +169,8 @@ def print_withdrawal_info(withdrawal_info):
 def print_delegators(delegators, val_id):
     console = Console()
     table = Table()
-    table.add_column(f"Delegators for [red bold]val-id: {val_id}[/]")
-    for delegator in delegators[2]:
+    table.add_column(f"[red]{len(delegators)}[/] Delegators for [red bold]val-id: {val_id}[/]")
+    for delegator in delegators:
         table.add_row(delegator, style="cyan")
     console.print(table)
 
@@ -254,7 +254,7 @@ def query(config):
                 config, "Enter delegator address:", default=delegator_address
             )
             validator_list = get_validators_list(config, address)
-            print_validator_set(config, validator_list[2], False)
+            print_validator_set(config, validator_list, False)
         elif choice == "9":
             epoch_info = get_epoch_info(config)
             print_epoch(epoch_info)
@@ -328,7 +328,7 @@ def query_cli(config: dict, args: Namespace):
             log.error("Error! Invalid Delegator Address")
             return
         validator_list = get_validators_list(config, address)
-        print_validator_set(config, validator_list[2], False)
+        print_validator_set(config, validator_list, False)
     elif args.query == "epoch":
         epoch_info = get_epoch_info(config)
         print_epoch(epoch_info)
