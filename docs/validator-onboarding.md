@@ -2,7 +2,7 @@
 
 ### Summary
 
-1. Setup staking cli according to the [installation instructions](../readme.md#installation).
+1. Setup staking cli according to the [installation instructions](../README.md#installation).
 2. Get a Funded Address and populate the `config.toml` with its private key.
    For better security, export `FUNDED_ADDRESS_PRIVATE_KEY` as an env var, or even better, use a Ledger hardware wallet and adjust `config.toml` accordingly.
    - **Please use hardware wallet for production environment**
