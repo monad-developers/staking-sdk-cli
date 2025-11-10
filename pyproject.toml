@@ -50,10 +50,13 @@ omit = ["src/staking_sdk_py/__about__.py"]
 
 [tool.coverage.paths]
 staking_sdk_py = ["src/staking_sdk_py", "*/staking-sdk-py/src/staking_sdk_py"]
-tests = ["tests", "*/staking-sdk-py/tests"]
+tests = ["*/staking-sdk-py/tests"]
 
 [tool.coverage.report]
 exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/staking_sdk_py"]
+
+[tool.pytest.ini_options]
+testpaths = ["staking-cli/tests"]

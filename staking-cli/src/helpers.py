@@ -47,6 +47,9 @@ def is_valid_amount(amount: int, register=False) -> bool:
 def is_valid_bls_private_key(private_key: Union[int, str]) -> bool:
     """Validates a BLS12-381 private key."""
     if isinstance(private_key, str):
+        if not private_key.startswith("0x"):
+            return False
+            
         try:
             # Convert hex string (with '0x' prefix) to integer
             key_int = int(private_key, 16)
