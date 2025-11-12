@@ -23,20 +23,35 @@ def find_cli_directory():
 
     # Try 3: In share/staking-cli (if installed via shared-data)
     # pipx installs packages in ~/.local/pipx/venvs/<package>/share/<package>/
+    # pipx run uses ~/.local/pipx/.cache/<hash>/share/<package>/
     try:
-        import site
         import sysconfig
-        # Try to find share directory in various locations
-        for path in site.getsitepackages() + [sysconfig.get_path('data')]:
+        # Get the data path (where share/ directory is located)
+        data_path = Path(sysconfig.get_path('data'))
+        share_dir = data_path / 'share' / 'staking-cli'
+        if share_dir.exists():
+            return share_dir
+
+        # Also try relative to site-packages (for some installation methods)
+        import site
+        for path in site.getsitepackages():
+            # Try parent of site-packages (lib/pythonX.Y) then up to share
+            share_dir = Path(path).parent.parent / 'share' / 'staking-cli'
+            if share_dir.exists():
+                return share_dir
+            # Also try at the same level as site-packages
             share_dir = Path(path).parent / 'share' / 'staking-cli'
             if share_dir.exists():
                 return share_dir
-        # Also try relative to package
+
+        # Try relative to package location
         import staking_sdk_py
         package_location = Path(staking_sdk_py.__file__).parent.parent
-        share_dir = package_location.parent / 'share' / 'staking-cli'
-        if share_dir.exists():
-            return share_dir
+        # Try various parent levels
+        for parent in [package_location.parent, package_location.parent.parent]:
+            share_dir = parent / 'share' / 'staking-cli'
+            if share_dir.exists():
+                return share_dir
     except Exception:
         pass
 
