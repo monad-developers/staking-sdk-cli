@@ -34,6 +34,9 @@ dependencies = [
 
 [project.urls]
 
+[project.scripts]
+monad-staking-cli = "staking_sdk_py.cli:main"
+
 [tool.hatch.version]
 path = "src/staking_sdk_py/__about__.py"
 
@@ -57,3 +60,6 @@ exclude_lines = ["no cov", "if __name__ == .__main__.:", "if TYPE_CHECKING:"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/staking_sdk_py"]
+
+[tool.hatch.build.targets.wheel.shared-data]
+"staking-cli" = "share/staking-cli"
