@@ -116,6 +116,18 @@ INFO     Commission successfully changed from 10.0% to 5.0% for validator 1
 
 **Note:** Only the Validator's authorized address can change the commission.
 
+### Transfer MON
+
+Transfer MON from the validator's account to a specified address.
+
+```sh
+python main.py transfer \
+--address 0x123... \
+--amount 1000 \
+--config-path ~/config.toml \
+--force # optional: skip confirmation
+```
+
 ## Query Commands
 
 ### Query Validator Information
