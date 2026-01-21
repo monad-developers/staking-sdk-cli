@@ -12,6 +12,7 @@ A CLI tool to interact with Monad's staking contract and execute operations by i
 - Compounding rewards
 - Changing Validator commission
 - Querying staking state on the chain
+- Transferring funds between addresses
 
 ## Security Notes
 
@@ -125,12 +126,12 @@ $ source cli-venv/bin/activate
 $ python staking-cli/main.py --help
 
 usage: main.py [-h]
-               {add-validator,delegate,undelegate,withdraw,claim-rewards,compound-rewards,change-commission,query,tui} ...
+               {add-validator,delegate,undelegate,withdraw,claim-rewards,compound-rewards,change-commission,transfer,query,tui} ...
 
 Staking CLI for Validators on Monad
 
 positional arguments:
-  {add-validator,delegate,undelegate,withdraw,claim-rewards,compound-rewards,change-commission,query,tui}
+  {add-validator,delegate,undelegate,withdraw,claim-rewards,compound-rewards,change-commission,transfer,query,tui}
     add-validator       Add a new validator to network
     delegate            Delegate to a validator in the network
     undelegate          Undelegate Stake from validator
@@ -138,6 +139,7 @@ positional arguments:
     claim-rewards       Claim staking rewards
     compound-rewards    Compound rewards to validator
     change-commission   Change validator commission
+    transfer            Transfer MON to an address
     query               Query network information
     tui                 Use a menu-driven TUI
 
@@ -170,8 +172,9 @@ $ python staking-cli/main.py tui
 │                                      │
 │        8. Query                      │
 │                                      │
-│        9. Exit                       │
+│        9. Transfer                   │
 │                                      │
+│        10. Exit                      │
 │                                      │
 ╰──────────────────────────────────────╯
 ```

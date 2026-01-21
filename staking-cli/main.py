@@ -18,6 +18,7 @@ from src.query_menu import query, query_cli
 from src.parser import init_parser
 from src.helpers import number_prompt, confirmation_prompt
 from src.signer import create_signer
+from src.transfer import transfer, transfer_cli
 
 class StakingCLI:
     def __init__(self):
@@ -91,7 +92,8 @@ class StakingCLI:
         [{self.colors["primary_text"]}]6. Compound[/]\n
         [{self.colors["primary_text"]}]7. Change Commission[/]\n
         [{self.colors["primary_text"]}]8. Query[/]\n
-        [{self.colors["primary_text"]}]9. Exit[/]\n
+        [{self.colors["primary_text"]}]9. Transfer[/]\n
+        [{self.colors["primary_text"]}]10. Exit[/]\n
         '''
         menu_text = Align(menu_text, align="left")
         main_panel = Panel(
@@ -101,7 +103,7 @@ class StakingCLI:
             expand=False
         )
         while True:
-            choices = [str(x) for x in range(1,10)]
+            choices = [str(x) for x in range(1,11)]
             self.console.print(main_panel)
             choice = number_prompt("Enter a number as a choice", choices, default="9")
 
@@ -130,6 +132,9 @@ class StakingCLI:
                 query(self.config, self.signer)
                 self.log.info("Exited Query Menu\n\n")
             elif choice == "9":
+                transfer(self.config, self.signer)
+                self.log.info("Exited Transfer\n\n")
+            elif choice == "10":
                 self.log.info("Staking CLI has been exited!")
                 sys.exit()
 
@@ -172,6 +177,8 @@ class StakingCLI:
             change_validator_commission_cli(self.config, self.signer, validator_id, commission_percentage)
         elif self.args.command == "query":
             query_cli(self.config, self.args)
+        elif self.args.command == "transfer":
+            transfer_cli(self.config, self.signer, self.args)
 
 
 if __name__ == "__main__":

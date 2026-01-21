@@ -28,6 +28,9 @@ def init_parser() -> argparse.ArgumentParser:
     change_commission_parser = subparsers.add_parser(
         "change-commission", help="Change validator commission"
     )
+    transfer_parser = subparsers.add_parser(
+        "transfer", help="Transfer MON to an address"
+    )
     query_parser = subparsers.add_parser("query", help="Query network information")
     tui_parser = subparsers.add_parser("tui", help="Use a menu-driven TUI")
 
@@ -179,6 +182,31 @@ def init_parser() -> argparse.ArgumentParser:
         help="New commission rate as percentage (0.0 to 100.0)",
     )
     change_commission_parser.add_argument(
+        "--config-path",
+        type=str,
+        default="./config.toml",
+        help="Add a path to a config.toml file",
+    )
+
+    # transfer_parser
+    transfer_parser.add_argument(
+        "--address",
+        type=str,
+        required=True,
+        help="Recipient address",
+    )
+    transfer_parser.add_argument(
+        "--amount",
+        type=int,
+        required=True,
+        help="Amount in MON to transfer",
+    )
+    transfer_parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Skip confirmation",
+    )
+    transfer_parser.add_argument(
         "--config-path",
         type=str,
         default="./config.toml",
