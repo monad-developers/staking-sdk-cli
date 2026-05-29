@@ -27,6 +27,10 @@ A CLI tool to interact with Monad's staking contract and execute operations by i
 - Git
 - Access to a Monad RPC endpoint
 - Private key with sufficient funds for transactions
+- If you are using Debian/Ubuntu:
+```bash
+sudo apt install python3-venv
+```
 
 ## Installation
 
